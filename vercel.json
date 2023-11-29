@@ -1,7 +1,6 @@
 {
-  "functions": {
-    "api": {
-      "handler": "main.py"
-    }
-  }
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/main.py" }
+  ]
 }
