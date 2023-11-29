@@ -1,6 +1,6 @@
 {
   "routes": [
     { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/main.py" }
+    { "src": "/(.*)", "dest": "/api/main.py" }
   ]
 }
