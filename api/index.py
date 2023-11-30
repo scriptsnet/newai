@@ -13,9 +13,10 @@ class handler(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
         self.wfile.write("DearXuan's API by python!".encode())
-		
-		self.wfile.write(openai.api_key)
+		newstr=GetNewStrFromNstr()
+		self.wfile.write(newstr)
         return
-
-
+		
+	def GetNewStrFromNstr(instr):
+		return "12345"
 
