@@ -9,6 +9,8 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @app.route("/", methods=("GET", "POST"))
 def index():
+	if request.method =="GET":
+		result = "test"
     if request.method == "POST":
         animal = request.form["animal"]
         response = openai.Completion.create(
