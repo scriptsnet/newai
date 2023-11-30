@@ -14,7 +14,7 @@ class handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write("DearXuan's API by python!".encode())
 		
-		self.wfile.write(openai.api_key.encode())
+		self.wfile.write(openai.api_key)
         return
 
 
