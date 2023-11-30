@@ -1,34 +1,35 @@
-from http.server import BaseHTTPRequestHandler
-import openai
 import os
 
-# 从环境变量获取你的OpenAI Secret Key，如果没有设置，使用默认值
-openai.api_key = os.getenv("OPENAI_SK", "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")  
+import openai
+from flask import Flask, redirect, render_template, request, url_for
 
-class handler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        try:
-            response = openai.ChatCompletion.create(
-                model="gpt-4.0-turbo",
-                messages=[
-                    {
-                        "role": "system",
-                        "content": "You are a helpful assistant."
-                    },
-                    {
-                        "role": "user",
-                        "content": "你的版本是多少？"
-                    }
-                ]
-            )
+app = Flask(__name__)
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-            self.send_response(200)
-            self.send_header('Content-type', 'text/plain')
-            self.end_headers()
-            self.wfile.write(response['choices'][0]['message']['content'].encode())
-        except Exception as e:
-            self.send_response(500)
-            self.send_header('Content-type', 'text/plain')
-            self.end_headers()
-            self.wfile.write(str(e).encode())
-        return
+
+@app.route("/", methods=("GET", "POST"))
+def index():
+    if request.method == "POST":
+        animal = request.form["animal"]
+        response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt=generate_prompt(animal),
+            temperature=0.6,
+        )
+        return redirect(url_for("index", result=response.choices[0].text))
+
+    result = request.args.get("result")
+    return render_template("index.html", result=result)
+
+
+def generate_prompt(animal):
+    return """Suggest three names for an animal that is a superhero.
+
+Animal: Cat
+Names: Captain Sharpclaw, Agent Fluffball, The Incredible Feline
+Animal: Dog
+Names: Ruff the Protector, Wonder Canine, Sir Barks-a-Lot
+Animal: {}
+Names:""".format(
+        animal.capitalize()
+    )
