@@ -1,7 +1,9 @@
 import os
+import json
 from http.server import BaseHTTPRequestHandler
 import openai
 from flask import Flask, redirect, render_template, request, url_for
+from urllib.parse import parse_qs
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -11,19 +13,27 @@ class handler(BaseHTTPRequestHandler):
         {"role": "system", "content": "你是一个非常厉害的工作助手，你无所不能"},
     ]
 
-    def do_GET(self):
-        try:
-            self.send_response(200)
-            self.send_header('Content-type', 'text/plain')
-            self.end_headers()
-            self.wfile.write("DearXuan's API by python!".encode())
-            prompt = "你是什么版本的GPT?"
-            response = self.send_message(prompt)
-            self.wfile.write(response.encode())
-        except Exception as e:
-            error_message = f"Error occurred: {e}"
-            self.wfile.write(error_message.encode())
-        return
+    def do_POST(self):
+        content_length = int(self.headers['Content-Length'])
+        post_data = self.rfile.read(content_length)
+        params = parse_qs(post_data.decode())
+
+        word = params.get('word', [''])[0]
+        history = params.get('history', [''])[0]
+        redirect_uri = params.get('redirect_uri', [''])[0]
+        ownid = params.get('ownid', [''])[0]
+
+        self.conversation_history.append({"role": "user", "content": history})
+
+        response = self.send_message(word)
+        resp = {
+            "response": response,
+            "ownid": ownid
+        }
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()
+        self.wfile.write(json.dumps(resp).encode())
 
     def send_message(self, message):
         try:
