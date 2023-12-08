@@ -12,24 +12,31 @@ class handler(BaseHTTPRequestHandler):
     ]
 
     def do_GET(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/plain')
-        self.end_headers()
-        #self.wfile.write("DearXuan's API by python!".encode())
-        prompt = "请作诗一首"
-        response = self.send_message(prompt)
-        self.wfile.write(response.encode())
+        try:
+            self.send_response(200)
+            self.send_header('Content-type', 'text/plain')
+            self.end_headers()
+            #self.wfile.write("DearXuan's API by python!".encode())
+            prompt = "请作诗一首"
+            response = self.send_message(prompt)
+            self.wfile.write(response.encode())
+        except Exception as e:
+            print(f"Error occurred: {e}")
         return
 
     def send_message(self, message):
-        self.conversation_history.append({"role": "user", "content": message})
+        try:
+            self.conversation_history.append({"role": "user", "content": message})
 
-        response = openai.ChatCompletion.create(
-            model="gpt-4-1106-preview",
-            messages=self.conversation_history
-        )
+            response = openai.ChatCompletion.create(
+                model="gpt-4-1106-preview",
+                messages=self.conversation_history
+            )
 
-        assistant_reply = response['choices'][0]['message']['content']
-        self.conversation_history.append({"role": "assistant", "content": assistant_reply})
+            assistant_reply = response['choices'][0]['message']['content']
+            self.conversation_history.append({"role": "assistant", "content": assistant_reply})
 
-        return assistant_reply
+            return assistant_reply
+        except Exception as e:
+            print(f"Error occurred: {e}")
+            return "Error occurred while processing the request."
