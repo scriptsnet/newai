@@ -1,11 +1,10 @@
 import os
-
+from http.server import BaseHTTPRequestHandler
 import openai
 from flask import Flask, redirect, render_template, request, url_for
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -13,10 +12,9 @@ class handler(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
         self.wfile.write("DearXuan's API by python!".encode())
-		newstr=GetNewStrFromNstr()
-		self.wfile.write(newstr)
+        newstr = self.GetNewStrFromNstr("instr")
+        self.wfile.write(newstr.encode())
         return
-		
-	def GetNewStrFromNstr(instr):
-		return "12345"
 
+    def GetNewStrFromNstr(self, instr):
+        return "12345"
