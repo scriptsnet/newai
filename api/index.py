@@ -12,7 +12,7 @@ class handler(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
         self.wfile.write("DearXuan's API by python!".encode())
-        prompt = "请作诗一首"
+        prompt = "请将这句话翻译中英语“山有多高，地有多险，人心就有多高”"
         response = self.get_gpt3_response(prompt)
         self.wfile.write(response.encode())
         return
