@@ -16,12 +16,13 @@ class handler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-type', 'text/plain')
             self.end_headers()
-            #self.wfile.write("DearXuan's API by python!".encode())
-            prompt = "请作诗一首"
+            self.wfile.write("DearXuan's API by python!".encode())
+            prompt = "你是什么版本的GPT?"
             response = self.send_message(prompt)
             self.wfile.write(response.encode())
         except Exception as e:
-            print(f"Error occurred: {e}")
+            error_message = f"Error occurred: {e}"
+            self.wfile.write(error_message.encode())
         return
 
     def send_message(self, message):
@@ -29,7 +30,7 @@ class handler(BaseHTTPRequestHandler):
             self.conversation_history.append({"role": "user", "content": message})
 
             response = openai.ChatCompletion.create(
-                model="gpt-4-1106-preview",
+                model="gpt-4",
                 messages=self.conversation_history
             )
 
@@ -38,5 +39,4 @@ class handler(BaseHTTPRequestHandler):
 
             return assistant_reply
         except Exception as e:
-            print(f"Error occurred: {e}")
-            return "Error occurred while processing the request."
+            return f"Error occurred while processing the request: {e}"
