@@ -22,10 +22,11 @@ class handler(BaseHTTPRequestHandler):
         history = params.get('history', [''])[0]
         redirect_uri = params.get('redirect_uri', [''])[0]
         ownid = params.get('ownid', [''])[0]
+        model = params.get('model', ['gpt-4'])[0]
 
-        #self.conversation_history.append({"role": "user", "content": history})
+        self.conversation_history.append({"role": "user", "content": history})
 
-        response = self.send_message(word)
+        response = self.send_message(word, model)
         resp = {
             "response": response,
             "ownid": ownid
@@ -35,18 +36,17 @@ class handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(json.dumps(resp).encode())
 
-    def send_message(self, message):
+    def send_message(self, message, model):
         try:
             self.conversation_history.append({"role": "user", "content": message})
 
             response = openai.ChatCompletion.create(
-                model="gpt-4",
+                model=model,
                 messages=self.conversation_history
             )
 
-            assistant_reply = response['choices'][0]['message']['content']
-            self.conversation_history.append({"role": "assistant", "content": assistant_reply})
+            self.conversation_history.append({"role": "assistant", "content": response['choices'][0]['message']['content']})
 
-            return assistant_reply
+            return response
         except Exception as e:
-            return f"Error occurred while processing the request: {e}"
+            return {"error": f"Error occurred while processing the request: {e}"}
