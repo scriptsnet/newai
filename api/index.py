@@ -23,7 +23,7 @@ class handler(BaseHTTPRequestHandler):
         redirect_uri = params.get('redirect_uri', [''])[0]
         ownid = params.get('ownid', [''])[0]
 
-        self.conversation_history.append({"role": "user", "content": history})
+        #self.conversation_history.append({"role": "user", "content": history})
 
         response = self.send_message(word)
         resp = {
