@@ -43,7 +43,7 @@ class handler(BaseHTTPRequestHandler):
             response = openai.ChatCompletion.create(
                 model=model,
                 messages=self.conversation_history,
-				max_tokens=8096
+				max_tokens=3000
 				
             )
 
