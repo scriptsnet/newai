@@ -43,8 +43,9 @@ class handler(BaseHTTPRequestHandler):
             response = openai.ChatCompletion.create(
                 model=model,
                 messages=self.conversation_history,
-				max_tokens=3000
-				
+                max_tokens=20,  # 设置每次回答的最大长度为1个token
+                temperature=0.0,  # 设置温度为0以确保回答的一致性
+                n=1  # 设置生成一条回答
             )
 
             self.conversation_history.append({"role": "assistant", "content": response['choices'][0]['message']['content']})
