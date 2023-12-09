@@ -42,7 +42,9 @@ class handler(BaseHTTPRequestHandler):
 
             response = openai.ChatCompletion.create(
                 model=model,
-                messages=self.conversation_history
+                messages=self.conversation_history,
+				max_tokens=8096
+				
             )
 
             self.conversation_history.append({"role": "assistant", "content": response['choices'][0]['message']['content']})
